@@ -1,9 +1,9 @@
-import Controller from "sap/ui/core/mvc/Controller";
+import BaseController from "./BaseController";
 
 /**
  * @namespace santos.sapui5productsfe.controller
  */
-export default class Master extends Controller {
+export default class Master extends BaseController {
 
     public onInit(): void {
 
