@@ -1,6 +1,6 @@
 import BaseController from "./BaseController";
 import Control from "sap/ui/core/Control";
-import { FilterBar$SearchEvent } from "sap/ui/comp/filterbar/FilterBar";
+import { FilterBar$ClearEvent, FilterBar$SearchEvent } from "sap/ui/comp/filterbar/FilterBar";
 import FilterGroupItem from "sap/ui/comp/filterbar/FilterGroupItem";
 import Input from "sap/m/Input";
 import RatingIndicator from "sap/m/RatingIndicator";
@@ -28,10 +28,7 @@ export default class Master extends BaseController {
             .map((control) => this.buildFilter(control))
             .filter((filter): filter is Filter => filter !== null);
 
-        const table = this.byId("idProductsSetTable") as Table;
-        const binding = table.getBinding("items") as ODataListBinding;
-
-        binding.filter(filters, FilterType.Application);
+        this.applyFilters(filters);
     }
 
     private buildFilter(control: Control): Filter | null {
@@ -63,5 +60,36 @@ export default class Master extends BaseController {
         }
 
         return null;
+    }
+
+    private applyFilters(filters: Filter[]): void {
+        const table = this.byId("idProductsSetTable") as Table;
+        const binding = table.getBinding("items") as ODataListBinding;
+        binding.filter(filters, FilterType.Application);
+    }
+
+    public onFilterBarClear(event: FilterBar$ClearEvent): void {
+        const selectionSet = (event.getParameter("selectionSet") ?? []) as Control[];
+        selectionSet.forEach((control) => this.clearControl(control));
+        this.applyFilters([]);
+    }
+
+    private clearControl(control: Control): void {
+        if (control instanceof Input) {
+            control.setValue("");
+            return;
+        }
+        if (control instanceof ComboBox) {
+            control.setSelectedKey("");
+            return;
+        }
+        if (control instanceof RatingIndicator) {
+            control.setValue(0);
+            return;
+        }
+        if (control instanceof RangeSlider) {
+            control.setValue(control.getMin(), {});
+            control.setValue2(control.getMax());
+        }
     }
 }

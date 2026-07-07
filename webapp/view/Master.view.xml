@@ -17,7 +17,11 @@
 
         <f:header>
             <f:DynamicPageHeader id="idDynamicPageHeader">
-                <filterbar:FilterBar id="idFilterBar" search="onFilterBarSearch">
+                <filterbar:FilterBar id="idFilterBar" 
+                    search="onFilterBarSearch" 
+                    showClearOnFB="true"
+                    clear="onFilterBarClear"
+                >
                     <filterbar:filterGroupItems>
 
                         <filterbar:FilterGroupItem id="idProductNameFilterGroupItem"
@@ -156,7 +160,12 @@
                                                             'NotAvailable' ? 'Error' : 'None'
                                 }"
                             />
-                            <RatingIndicator id="idRatingRatingIndicator" value="{rating}" iconSize="1.25rem"/>
+                            <RatingIndicator id="idRatingRatingIndicator" 
+                                value="{rating}" 
+                                iconSize="1.25rem" 
+                                editable="false"
+                                class="sapUiMediumMarginBegin"
+                            />
                             <ObjectNumber id="idPriceObjectNumber" 
                                 number="{ 
                                     parts: ['price', 'currency'], 
