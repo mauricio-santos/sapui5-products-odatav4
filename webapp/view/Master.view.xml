@@ -24,6 +24,13 @@
                 growingScrollToLoad="true" 
                 mode="SingleSelectMaster" 
             >
+
+                <headerToolbar>
+                    <Toolbar id="idCountProductsToolbar">
+                        <Title id="idCountProductsTitle" text="{i18n>appTitle} ({/ProductsSet/$count})"/>
+                    </Toolbar>
+                </headerToolbar>
+
                 <columns>
                     <Column id="idProductColumn" demandPopin="true" minScreenWidth="Small">
                         <Label id="idProductIDLabel" text="{i18n>productId}"/>
