@@ -17,7 +17,7 @@
 
         <f:header>
             <f:DynamicPageHeader id="idDynamicPageHeader">
-                <filterbar:FilterBar id="idFilterBar">
+                <filterbar:FilterBar id="idFilterBar" search="onFilterBarSearch">
                     <filterbar:filterGroupItems>
 
                         <filterbar:FilterGroupItem id="idProductNameFilterGroupItem"
@@ -33,7 +33,7 @@
 
                         <filterbar:FilterGroupItem id="idSupplierNameFilterGroupItem"
                             groupName="productsFilters" 
-                            name="supplierName"
+                            name="supplier_ID"
                             label="{i18n>supplier}"
                             visibleInFilterBar="true"
                         >
@@ -46,7 +46,7 @@
 
                         <filterbar:FilterGroupItem id="idCategoryFilterGroupItem"
                             groupName="productsFilters" 
-                            name="category"
+                            name="category_ID"
                             label="{i18n>category}"
                             visibleInFilterBar="true"
                         >
@@ -59,7 +59,7 @@
 
                         <filterbar:FilterGroupItem id="idStockFilterGroupItem"
                             groupName="productsFilters" 
-                            name="stock"
+                            name="stock_code"
                             label="{i18n>stock}"
                             visibleInFilterBar="true"
                         >
