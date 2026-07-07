@@ -155,9 +155,9 @@
                             <Text id="idCategoryText" text="{category/category}"/>
                             <ObjectStatus id="idStockCodeObjectStatus" text="{stock_code}"
                                 state="{=
-                                    ${stock_code} === 'Available' ? 'Success' :
-                                                            'LowAvailability' ? 'Warning' :
-                                                            'NotAvailable' ? 'Error' : 'None'
+                                    ${stock_code} === 'Available'        ? 'Success' :
+                                    ${stock_code} === 'LowAvailability'  ? 'Warning' :
+                                    ${stock_code} === 'NotAvailable'     ? 'Error'   : 'None'
                                 }"
                             />
                             <RatingIndicator id="idRatingRatingIndicator" 
