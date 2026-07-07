@@ -2,7 +2,8 @@
     xmlns="sap.m"
     xmlns:f="sap.f"
     xmlns:core="sap.ui.core"
-    xmlns:mvc="sap.ui.core.mvc">
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:filterbar="sap.ui.comp.filterbar">
 
     <f:DynamicPage id="idDynamicPage">
 
@@ -15,6 +16,85 @@
         </f:title>
 
         <f:header>
+            <f:DynamicPageHeader id="idDynamicPageHeader">
+                <filterbar:FilterBar id="idFilterBar">
+                    <filterbar:filterGroupItems>
+
+                        <filterbar:FilterGroupItem id="idProductNameFilterGroupItem"
+                            groupName="productsFilters" 
+                            name="productName"
+                            label="{i18n>productName}"
+                            visibleInFilterBar="true"
+                        >
+                            <filterbar:control>
+                                <Input id="idProductInput"/>
+                            </filterbar:control>
+                        </filterbar:FilterGroupItem>
+
+                        <filterbar:FilterGroupItem id="idSupplierNameFilterGroupItem"
+                            groupName="productsFilters" 
+                            name="supplierName"
+                            label="{i18n>supplier}"
+                            visibleInFilterBar="true"
+                        >
+                            <filterbar:control>
+                                <ComboBox id="idSuppliersSetComboBox" items="{/SuppliersSet}">
+                                    <core:ListItem id="idSupplierNameListItem" key="{ID}" text="{supplierName}"/>
+                                </ComboBox>
+                            </filterbar:control>
+                        </filterbar:FilterGroupItem>
+
+                        <filterbar:FilterGroupItem id="idCategoryFilterGroupItem"
+                            groupName="productsFilters" 
+                            name="category"
+                            label="{i18n>category}"
+                            visibleInFilterBar="true"
+                        >
+                            <filterbar:control>
+                                <ComboBox id="idVhCategoriesSetComboBox" items="{/VH_CategoriesSet}">
+                                    <core:ListItem id="idCategoryNameListItem" key="{ID}" text="{category}"/>
+                                </ComboBox>
+                            </filterbar:control>
+                        </filterbar:FilterGroupItem>
+
+                        <filterbar:FilterGroupItem id="idStockFilterGroupItem"
+                            groupName="productsFilters" 
+                            name="stock"
+                            label="{i18n>stock}"
+                            visibleInFilterBar="true"
+                        >
+                            <filterbar:control>
+                                <ComboBox id="idVhStockStockComboBox" items="{/VH_Stock}">
+                                    <core:ListItem id="idNameStockListItem" key="{code}" text="{name}"/>
+                                </ComboBox>
+                            </filterbar:control>
+                        </filterbar:FilterGroupItem>
+
+                        <filterbar:FilterGroupItem id="idRatingFilterGroupItem"
+                            groupName="productsFilters"
+                            name="rating"
+                            label="{i18n>rating}"
+                            visibleInFilterBar="true"
+                        >
+                            <filterbar:control>
+                                <RatingIndicator id="idRatingIndicator"/>
+                            </filterbar:control>
+                        </filterbar:FilterGroupItem>
+
+                        <filterbar:FilterGroupItem id="idPriceFilterGroupItem"
+                            groupName="productsFilters"
+                            name="price"
+                            label="{i18n>price}"
+                            visibleInFilterBar="true"
+                        >
+                            <filterbar:control>
+                                <RangeSlider id="idPriceRangeSlider" showAdvancedTooltip="true"/>
+                            </filterbar:control>
+                        </filterbar:FilterGroupItem>
+
+                    </filterbar:filterGroupItems>
+                </filterbar:FilterBar>
+            </f:DynamicPageHeader>
         </f:header>
 
         <f:content>
