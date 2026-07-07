@@ -1,7 +1,9 @@
 <mvc:View controllerName="santos.sapui5productsfe.controller.App"
-    displayBlock="true"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
-    <App id="app">
-    </App>
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc">
+    
+    <Shell id="idShell">
+        <App id="app"/>
+    </Shell>
+    
 </mvc:View>

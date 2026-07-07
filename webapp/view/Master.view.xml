@@ -1,6 +1,27 @@
 <mvc:View controllerName="santos.sapui5productsfe.controller.Master"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
-    <Page id="page" title="{i18n>title}">
-    </Page>
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:mvc="sap.ui.core.mvc">
+
+    <f:DynamicPage id="idDynamicPage">
+
+        <f:title>
+            <f:DynamicPageTitle id="idDynamicPageTitle" backgroundDesign="Solid">
+                <f:heading>
+                    <Title id="idProductsTitle" text="{i18n>appTitle}" wrapping="true"/>
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <f:header>
+        </f:header>
+
+        <f:content>
+        </f:content>
+
+        <f:footer>
+        </f:footer>
+
+    </f:DynamicPage>
+
 </mvc:View>
