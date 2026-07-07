@@ -11,6 +11,7 @@ import Filter from "sap/ui/model/Filter";
 import FilterOperator from "sap/ui/model/FilterOperator";
 import FilterType from "sap/ui/model/FilterType";
 import ODataListBinding from "sap/ui/model/odata/v4/ODataListBinding";
+import Utils from "../utils/Utils";
 
 /**
  * @namespace santos.sapui5productsfe.controller
@@ -65,7 +66,10 @@ export default class Master extends BaseController {
     private applyFilters(filters: Filter[]): void {
         const table = this.byId("idProductsSetTable") as Table;
         const binding = table.getBinding("items") as ODataListBinding;
+        
         binding.filter(filters, FilterType.Application);
+        
+        new Utils().refreshProductsCount(binding, this);
     }
 
     public onFilterBarClear(event: FilterBar$ClearEvent): void {

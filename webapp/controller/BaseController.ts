@@ -19,8 +19,8 @@ export default class BaseController extends Controller {
         (this.getView() as View)?.setModel(model, modelName);
     }
 
-    public getText(text: string): string | undefined {
-        return (((this.getOwnerComponent() as UIComponent).getModel("i18n") as ResourceModel).getResourceBundle() as ResourceBundle).getText(text);
+    public getText(text: string, parameters?: any[]): string | undefined {
+        return (((this.getOwnerComponent() as UIComponent).getModel("i18n") as ResourceModel).getResourceBundle() as ResourceBundle).getText(text, parameters);
     }
 
     public getRouter(): Router {
