@@ -25,31 +25,31 @@
                 mode="SingleSelectMaster" 
             >
                 <columns>
-                    <Column id="idProductColumn">
+                    <Column id="idProductColumn" demandPopin="true" minScreenWidth="Small">
                         <Label id="idProductIDLabel" text="{i18n>productId}"/>
                     </Column>
 
-                    <Column id="idProductNameColumn">
+                    <Column id="idProductNameColumn" demandPopin="true" minScreenWidth="Small">
                         <Label id="idProductNameLabel" text="{i18n>productName}"/>
                     </Column>
 
-                    <Column id="idSupplierColumn">
+                    <Column id="idSupplierColumn" demandPopin="true" minScreenWidth="Small">
                         <Label id="idSupplierLabel" text="{i18n>supplier}"/>
                     </Column>
 
-                    <Column id="idCategoryColumn">
+                    <Column id="idCategoryColumn" demandPopin="false" minScreenWidth="Small">
                         <Label id="idCategoryLabel" text="{i18n>category}"/>
                     </Column>
 
-                    <Column id="idStockColumn">
+                    <Column id="idStockColumn" demandPopin="true" minScreenWidth="Small">
                         <Label id="idStockLabel" text="{i18n>stock}"/>
                     </Column>
 
-                    <Column id="idRatingColumn">
+                    <Column id="idRatingColumn" demandPopin="false" minScreenWidth="Small">
                         <Label id="idRatingLabel" text="{i18n>rating}"/>
                     </Column>
 
-                    <Column id="idPriceColumn">
+                    <Column id="idPriceColumn" demandPopin="true" minScreenWidth="Small">
                         <Label id="idPriceLabel" text="{i18n>price}"/>
                     </Column>
                 </columns>
