@@ -1,6 +1,7 @@
 <mvc:View controllerName="santos.sapui5productsfe.controller.Master"
     xmlns="sap.m"
     xmlns:f="sap.f"
+    xmlns:core="sap.ui.core"
     xmlns:mvc="sap.ui.core.mvc">
 
     <f:DynamicPage id="idDynamicPage">
@@ -17,6 +18,72 @@
         </f:header>
 
         <f:content>
+            <Table id="idProductsSetTable"
+                items="{/ProductsSet}" 
+                growing="true" 
+                growingScrollToLoad="true" 
+                mode="SingleSelectMaster" 
+            >
+                <columns>
+                    <Column id="idProductColumn">
+                        <Label id="idProductIDLabel" text="{i18n>productId}"/>
+                    </Column>
+
+                    <Column id="idProductNameColumn">
+                        <Label id="idProductNameLabel" text="{i18n>productName}"/>
+                    </Column>
+
+                    <Column id="idSupplierColumn">
+                        <Label id="idSupplierLabel" text="{i18n>supplier}"/>
+                    </Column>
+
+                    <Column id="idCategoryColumn">
+                        <Label id="idCategoryLabel" text="{i18n>category}"/>
+                    </Column>
+
+                    <Column id="idStockColumn">
+                        <Label id="idStockLabel" text="{i18n>stock}"/>
+                    </Column>
+
+                    <Column id="idRatingColumn">
+                        <Label id="idRatingLabel" text="{i18n>rating}"/>
+                    </Column>
+
+                    <Column id="idPriceColumn">
+                        <Label id="idPriceLabel" text="{i18n>price}"/>
+                    </Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem id="idProductsColumnListItem">
+                        <cells>
+                            <ObjectIdentifier id="idProductObjectIdentifier" text="{product}"/>
+
+                            <Text id="idProductNameText" text="{productName}"/>
+                            <Text id="idSupplierNameText" text="{supplier/supplierName}"/>
+                            <Text id="idCategoryText" text="{category/category}"/>
+                            <ObjectStatus id="idStockCodeObjectStatus" text="{stock_code}"
+                                state="{=
+                                    ${stock_code} === 'Available' ? 'Success' :
+                                                            'LowAvailability' ? 'Warning' :
+                                                            'NotAvailable' ? 'Error' : 'None'
+                                }"
+                            />
+                            <RatingIndicator id="idRatingRatingIndicator" value="{rating}" iconSize="1.25rem"/>
+                            <ObjectNumber id="idPriceObjectNumber" 
+                                number="{ 
+                                    parts: ['price', 'currency'], 
+                                    type: 'sap.ui.model.type.Currency', 
+                                    formatOptions: {
+                                        showMeasure: false
+                                    } 
+                                }"
+                                unit="{currency}"
+                            />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
         </f:content>
 
         <f:footer>
