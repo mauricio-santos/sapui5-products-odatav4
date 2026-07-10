@@ -1,0 +1,14 @@
+<mvc:View controllerName="santos.sapui5productsfe.controller.Container"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc"
+>
+    <f:FlexibleColumnLayout id="idContainerFlexibleColumnLayout" layout="{view>/layout}">
+    
+        <f:beginColumnPages>
+            <mvc:View id="idMasterView" viewName="santos.sapui5productsfe.view.Master" type="XML"/>
+        </f:beginColumnPages>
+
+    </f:FlexibleColumnLayout>
+
+</mvc:View>

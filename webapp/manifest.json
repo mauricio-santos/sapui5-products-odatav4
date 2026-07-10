@@ -97,14 +97,22 @@
           "name": "RouteMaster",
           "pattern": ":?query:",
           "target": [
+            "TargetContainer",
             "TargetMaster"
           ]
         }
       ],
       "targets": {
+        "TargetContainer": {
+          "viewId": "Container",
+          "viewName": "Container"
+        },
         "TargetMaster": {
           "id": "Master",
-          "name": "Master"
+          "name": "Master",
+          "parent": "TargetContainer",
+          "controlId": "idContainerFlexibleColumnLayout",
+          "controlAggregation": "beginColumnPages"
         }
       }
     },
