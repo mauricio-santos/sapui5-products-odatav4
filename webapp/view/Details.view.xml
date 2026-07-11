@@ -1,0 +1,35 @@
+<mvc:View controllerName="santos.sapui5productsfe.controller.Details"
+	xmlns="sap.m"
+	xmlns:uxap="sap.uxap"
+	xmlns:mvc="sap.ui.core.mvc"
+>
+
+    <uxap:ObjectPageLayout id="idObjectPageLayout">
+
+	    <uxap:headerTitle>
+            <uxap:ObjectPageDynamicHeaderTitle id="idObjectPageDynamicHeaderTitle">
+                <uxap:expandedHeading>
+                    <FlexBox id="idExpandedHeadingFlexBox" fitContainer="true" alignItems="Center">
+                        <Title id="idProductExpandedHeadingTitle" text="{product}"/>
+                    </FlexBox>
+                </uxap:expandedHeading>
+
+                <uxap:snappedHeading>
+                    <FlexBox id="idSnappedHeadingFlexBox" fitContainer="true" alignItems="Center">
+                        <Title id="idProductSnappedHeadingTitle" text="{product}"/>
+                    </FlexBox>
+                </uxap:snappedHeading>
+
+                <uxap:expandedContent>
+                    <Title id="idProductNameExpandedContentTitle" text="{productName}"/>
+                </uxap:expandedContent>
+
+                <uxap:snappedContent>
+                    <Title id="idProductNameSnappedContentTitle" text="{productName}"/>
+                </uxap:snappedContent>
+            </uxap:ObjectPageDynamicHeaderTitle>
+        </uxap:headerTitle>
+
+    </uxap:ObjectPageLayout>
+
+</mvc:View>

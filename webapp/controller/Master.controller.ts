@@ -12,6 +12,11 @@ import FilterOperator from "sap/ui/model/FilterOperator";
 import FilterType from "sap/ui/model/FilterType";
 import ODataListBinding from "sap/ui/model/odata/v4/ODataListBinding";
 import Utils from "../utils/Utils";
+import { ListBase$ItemPressEvent } from "sap/m/ListBase";
+import ColumnListItem from "sap/m/ColumnListItem";
+import Context from "sap/ui/model/odata/v4/Context";
+import JSONModel from "sap/ui/model/json/JSONModel";
+import Router from "sap/ui/core/routing/Router";
 
 /**
  * @namespace santos.sapui5productsfe.controller
@@ -95,5 +100,14 @@ export default class Master extends BaseController {
             control.setValue(control.getMin(), {});
             control.setValue2(control.getMax());
         }
+    }
+
+    public navToDetails(event: ListBase$ItemPressEvent) : void {
+        const table = event.getSource() as Table;
+        const item = table.getSelectedItem() as ColumnListItem;
+        const id = (item.getBindingContext() as Context).getProperty("ID");
+        const router = this.getRouter() as Router;
+
+        router.navTo("RouteDetails", { "ID": id });
     }
 }

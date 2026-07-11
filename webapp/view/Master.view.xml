@@ -106,7 +106,8 @@
                 items="{/ProductsSet}" 
                 growing="true" 
                 growingScrollToLoad="true" 
-                mode="SingleSelectMaster" 
+                mode="SingleSelectMaster"
+                itemPress="navToDetails"
             >
 
                 <headerToolbar>
@@ -146,7 +147,7 @@
                 </columns>
 
                 <items>
-                    <ColumnListItem id="idProductsColumnListItem">
+                    <ColumnListItem id="idColumnListItem" type="Navigation">
                         <cells>
                             <ObjectIdentifier id="idProductObjectIdentifier" text="{product}"/>
 
