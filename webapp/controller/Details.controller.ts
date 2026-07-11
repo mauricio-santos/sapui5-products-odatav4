@@ -23,5 +23,21 @@ export default class Details extends BaseController {
         view.bindElement(bindingPath);
     }
 
+    public onButtonToggleFullScreenPress(): void {
+        const viewModel = this.getModel("view") as JSONModel;
+        const isFullScreen = viewModel.getProperty("/actionButtonsInfo/midColumn/fullScreen");
+        
+        viewModel.setProperty("/layout", isFullScreen ? "TwoColumnsMidExpanded" : "MidColumnFullScreen");
+        viewModel.setProperty("/actionButtonsInfo/midColumn/fullScreen", !isFullScreen);
+    }
+
+    public onButtonCloseViewDetailsPress(): void {
+        const viewModel = this.getModel("view") as JSONModel;
+        
+        (this.getRouter() as Router).navTo("RouteMaster");
+        viewModel.setProperty("/layout", "OneColumn");
+        viewModel.setProperty("/actionButtonsInfo/midColumn/fullScreen", false);
+    }
+
     
 }

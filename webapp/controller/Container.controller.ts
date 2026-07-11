@@ -12,7 +12,12 @@ export default class Container extends BaseController {
     
     private initViewModel(): void {
         const model = new JSONModel({
-            layout: "OneColumn"
+            layout: "OneColumn",
+            actionButtonsInfo: {
+                midColumn: {
+                    fullScreen: false
+                }
+            }
         })
         this.setModel(model, "view");
     }
