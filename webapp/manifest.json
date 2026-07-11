@@ -103,7 +103,7 @@
         },
         {
           "name": "RouteDetails",
-          "pattern": "Product({ID})",
+          "pattern": "Product(ID={ID})/{action}",
           "target": [
             "TargetMaster",
             "TargetDetails"

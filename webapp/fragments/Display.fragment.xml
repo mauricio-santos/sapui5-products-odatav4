@@ -1,0 +1,52 @@
+<core:FragmentDefinition 
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+>
+
+    <VBox id="idDisplayProductFragmentVBox" class="sapUiSmallMargin">
+
+        <form:SimpleForm id="idSimpleForm" editable="false" layout="ResponsiveGridLayout">
+            <form:title>
+                <core:Title id="idProductInformationTitle" text="{i18n>productInformation}"/>
+            </form:title>
+
+            <form:content>
+
+                <Label id="idProductIDFragmentLabel" text="{i18n>productId}"/>
+                <Text id="idProductFragmentText" text="{product}"/>
+
+                <Label id="idProductNameFragmentLabel" text="{i18n>productName}"/>
+                <Text id="idProductNameFragmentText" text="{productName}"/>
+
+                <Label id="idDescriptionFragmentLabel" text="{i18n>description}"/>
+                <Text id="idDescriptionFragmentText" text="{description}"/>
+
+                <Label id="idSupplierFragmentLabel" text="{i18n>supplier}"/>
+                <Text id="idSupplierNameFragmentText" text="{supplier/supplierName}"/>
+
+                <Label id="idCategoryFragmentLabel" text="{i18n>category}"/>
+                <Text id="idCategoryNameFragmentText" text="{category/category}"/>
+
+                <Label id="idSubCategoryLabel" text="{i18n>subCategory}"/>
+                <Text id="idSubCategoryFragmentText" text="{subCategory/subCategory}"/>
+
+                <Label id="idStockFragmentLabel" text="{i18n>stock}"/>
+                <Text id="idNameStockFragmentText" text="{stock/name}"/>
+
+                <Label id="idPriceFragmentLabel" text="{i18n>price}"/>
+                <Text id="idPriceFragmentText" text="{price}"/>
+
+                <Label id="idRatingFragmentLabel" text="{i18n>rating}"/>
+                <RatingIndicator id="idRatingFragmentRatingIndicator" value="{rating}" editable="{= ${view>/actionButtonsInfo/midColumn/isEditMode} }"/>
+
+                <Label id="idProductsCountFragmentLabel" text="{i18n>productsCount}"/>
+                <ObjectNumber id="idPriceFragmentObjectNumber" number="{price}" unit="{currency}"/>
+                
+            </form:content>
+
+        </form:SimpleForm>
+
+    </VBox>
+
+</core:FragmentDefinition>

@@ -108,6 +108,9 @@ export default class Master extends BaseController {
         const id = (item.getBindingContext() as Context).getProperty("ID");
         const router = this.getRouter() as Router;
 
-        router.navTo("RouteDetails", { "ID": id });
+        router.navTo("RouteDetails", { 
+            "ID": id,
+            "action": "edit"
+        });
     }
 }

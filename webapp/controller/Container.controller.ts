@@ -15,7 +15,8 @@ export default class Container extends BaseController {
             layout: "OneColumn",
             actionButtonsInfo: {
                 midColumn: {
-                    fullScreen: false
+                    fullScreen: false,
+                    isEditMode: false
                 }
             }
         })

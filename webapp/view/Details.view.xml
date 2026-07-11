@@ -29,6 +29,39 @@
                 </uxap:snappedContent>
 
                 <uxap:actions>
+
+                    <Button id="idDeleteButton" 
+                        icon="sap-icon://delete" 
+                        text="{i18n>delete}" 
+                        type="Reject"
+                        visible="{= !${view>/actionButtonsInfo/midColumn/isEditMode} ? true : false}"
+                        press="onButtonDeletePress"
+                    />
+
+                    <Button id="idSaveButton" 
+                        icon="sap-icon://save" 
+                        text="{i18n>save}" 
+                        type="Accept"
+                        visible="{= ${view>/actionButtonsInfo/midColumn/isEditMode} ? true : false}"
+                        press="onButtonSavePress"
+                    />
+
+                    <Button id="idCancelButton"
+                        icon="sap-icon://cancel" 
+                        text="{i18n>cancel}" 
+                        type="Attention"
+                        visible="{= ${view>/actionButtonsInfo/midColumn/isEditMode} ? true : false}"
+                        press="onButtonCancelPress"
+                    />
+
+                    <Button id="idEditButton" 
+                        icon="sap-icon://edit" 
+                        text="{i18n>edit}" 
+                        type="Emphasized"
+                        visible="{= !${view>/actionButtonsInfo/midColumn/isEditMode} ? true : false}"
+                        press="onButtonEditPress"
+                    />
+
                     <Button id="idFullScreenButton" 
                         icon="{= !${view>/actionButtonsInfo/midColumn/fullScreen} ? 'sap-icon://full-screen' : 'sap-icon://exit-full-screen'}"
                         press="onButtonToggleFullScreenPress"
@@ -36,13 +69,22 @@
 
                     <Button  id="idCloseViewDetailsButton"
                         icon="sap-icon://decline"
-                        type="Reject"
                         press="onButtonCloseViewDetailsPress"
                     />
 
                 </uxap:actions>
             </uxap:ObjectPageDynamicHeaderTitle>
         </uxap:headerTitle>
+
+        <uxap:sections>
+            <uxap:ObjectPageSection id="idObjectPageSection" title="{i18n>productInformation}">
+                <uxap:ObjectPageSubSection id="idObjectPageSubSection">
+                    <uxap:blocks>
+                        <FlexBox id="idformContainerFlexBox" direction="Column"/>
+                    </uxap:blocks>
+                </uxap:ObjectPageSubSection>
+            </uxap:ObjectPageSection>
+        </uxap:sections>
 
     </uxap:ObjectPageLayout>
 
