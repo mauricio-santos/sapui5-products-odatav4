@@ -34,13 +34,10 @@
                 <Label id="idStockFragmentLabel" text="{i18n>stock}"/>
                 <Text id="idNameStockFragmentText" text="{stock/name}"/>
 
-                <Label id="idPriceFragmentLabel" text="{i18n>price}"/>
-                <Text id="idPriceFragmentText" text="{price}"/>
-
                 <Label id="idRatingFragmentLabel" text="{i18n>rating}"/>
                 <RatingIndicator id="idRatingFragmentRatingIndicator" value="{rating}" editable="{= ${view>/actionButtonsInfo/midColumn/isEditMode} }"/>
 
-                <Label id="idProductsCountFragmentLabel" text="{i18n>productsCount}"/>
+                <Label id="idPriceFragmentLabel" text="{i18n>price}"/>
                 <ObjectNumber id="idPriceFragmentObjectNumber" number="{price}" unit="{currency}"/>
                 
             </form:content>

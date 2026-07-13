@@ -1,10 +1,57 @@
 <core:FragmentDefinition 
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
 >
 
     <VBox id="idChangeProductFragmentVBox" class="sapUiSmallMargin">
-    
+
+        <form:SimpleForm id="idEditSimpleForm" editable="true">
+            <form:title>
+                <core:Title id="idEditProductInformationTitle" text="{i18n>EditProductInformation}"/>
+            </form:title>
+
+            <form:content>
+
+                <Label id="idProductIDFragmentEditLabel" text="{i18n>productId}" required="true"/>
+                <Input id="idProductFragmentEditInput" value="{form>/product}"/>
+
+                <Label id="idProductNameFragmentEditLabel" text="{i18n>productName}" required="true"/>
+                <Input id="idProductNameFragmentEditInput" value="{form>/productName}"/>
+
+                <Label id="idDescriptionFragmentEditLabel" text="{i18n>description}"/>
+                <TextArea id="idDescriptionFragmentEditTextArea" value="{form>/description}"/>
+
+                <Label id="idSupplierFragmentEditLabel" text="{i18n>supplier}" required="true"/>
+                <ComboBox id="idSuppliersSetFragmentEditComboBox" items="{/SuppliersSet}" selectedKey="{form>/supplier_ID}">
+                    <core:Item id="idSupplierNameFragmentEditItem" key="{ID}" text="{supplierName}"/>
+                </ComboBox>
+
+                <Label id="idCategoryFragmentEditLabel" text="{i18n>category}" required="true"/>
+                <ComboBox id="idVhCategoriesSetFragmentEditComboBox" items="{/VH_CategoriesSet}" selectedKey="{form>/category_ID}">
+                    <core:Item id="idCategoryNameFragmentEditItem" key="{ID}" text="{category}"/>
+                </ComboBox>
+
+                <Label id="idSubCategoryFragmentEditLabel" text="{i18n>subCategory}" required="true"/>
+                <ComboBox id="idVhSubCategoriesSetFragmentEditComboBox" items="{/VH_SubCategoriesSet}" selectedKey="{form>/subCategory_ID}">
+                    <core:Item id="idSubCategoryNameFragmentEditItem" key="{ID}" text="{subCategory}"/>
+                </ComboBox>
+
+                <Label id="idStockFragmentEditLabel" text="{i18n>stock}" required="true"/>
+                <ComboBox id="idVhStockFragmentEditComboBox" items="{/VH_Stock}" selectedKey="{form>/stock_code}">
+                    <core:Item id="idNameFragmentEditItem" key="{code}" text="{name}"/>
+                </ComboBox>
+
+                <Label id="idPriceFragmentEditLabel" text="{i18n>price}"/>
+                <Input id="idPriceFragmentEditInput" value="{form>/price}" description="{form>/currency}"/>
+
+                <Label id="idRatingFragmentEditLabel" text="{i18n>rating}"/>
+                <RatingIndicator id="idRatingFragmentEditRatingIndicator" value="{form>/rating}" editable="{= ${view>/actionButtonsInfo/midColumn/isEditMode} }"/>
+                
+            </form:content>
+
+        </form:SimpleForm>
+
     </VBox>
 
 </core:FragmentDefinition>

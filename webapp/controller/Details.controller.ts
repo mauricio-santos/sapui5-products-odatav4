@@ -5,6 +5,8 @@ import View from "sap/ui/core/mvc/View";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import FlexBox from "sap/m/FlexBox";
 import VBox from "sap/m/VBox";
+import Context from "sap/ui/model/odata/v4/Context";
+import Utils from "../utils/Utils";
 
 const FRAGMENT_NAMESPACE = "santos.sapui5productsfe.fragments";
 
@@ -23,7 +25,24 @@ export default class Details extends BaseController {
         router.getRoute("RouteDetails")?.attachPatternMatched(this.onMatchedObject, this);
     }
 
+    private loadModel(): void {
+        const data = {
+            product: "",
+            productName: "",
+            description: "",
+            supplier_ID: "",
+            category_ID: "",
+            subCategory_ID: "",
+            stock_code: "",
+            rating: 0,
+            price: 0,
+            currency: "USD"
+        }
+        this.setModel(new JSONModel(data), "form");
+    }
+
     private onMatchedObject(event: Route$PatternMatchedEvent): void {
+        this.loadModel();
         const args = event.getParameter("arguments") as { ID: string; action: string };
         const view = this.getView() as View;
         const viewModel = this.getModel("view") as JSONModel;
@@ -65,6 +84,8 @@ export default class Details extends BaseController {
 
     public onButtonEditPress(): void {
         this.toggleEditMode(true);
+        const context = this.getView()?.getBindingContext() as Context;
+        Utils.copyForm(context, this);
     }
 
     public onButtonDeletePress(): void {
