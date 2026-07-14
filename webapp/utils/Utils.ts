@@ -20,4 +20,24 @@ export default class Utils {
         const data = context.getObject();       
         formModel.setData(data);
     }
+
+    public static async crud(controller: BaseController, action: string, bindingContext?: Context, model?: JSONModel): Promise<void | string> {
+        switch (action) {
+            case "create": return await this.create(controller);
+            case "update": return await this.update(controller, bindingContext, model);
+            case "delete": return await this.delete(controller, bindingContext);
+        }
+    }
+
+    private static async create(controller: BaseController): Promise<string> {
+        return "";
+    }
+
+    private static async update(controller: BaseController, bindingContext?: Context, model?: JSONModel): Promise<void> {
+
+    }
+
+    private static async delete(controller: BaseController, bindingContext?: Context): Promise<void> {
+
+    }
 }
