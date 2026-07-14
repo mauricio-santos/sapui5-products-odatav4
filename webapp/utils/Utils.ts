@@ -3,6 +3,7 @@ import Title from "sap/m/Title";
 import BaseController from "../controller/BaseController";
 import JSONModel from "sap/ui/model/json/JSONModel";
 import Context from "sap/ui/model/odata/v4/Context";
+import MessageBox from "sap/m/MessageBox";
 
 /**
  * @namespace santos.sapui5productsfe.utils
@@ -22,11 +23,20 @@ export default class Utils {
     }
 
     public static async crud(controller: BaseController, action: string, bindingContext?: Context, model?: JSONModel): Promise<void | string> {
-        switch (action) {
-            case "create": return await this.create(controller);
-            case "update": return await this.update(controller, bindingContext, model);
-            case "delete": return await this.delete(controller, bindingContext);
-        }
+
+        MessageBox.confirm(controller.getText("sureOperation"), {
+            actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+            emphasizedAction: MessageBox.Action.YES,
+            onClose: async (actionButton): Promise<void | string> => {
+                if (actionButton === MessageBox.Action.YES) {
+                    switch (action) {
+                        case "create": return await this.create(controller);
+                        case "update": return await this.update(controller, bindingContext, model);
+                        case "delete": return await this.delete(controller, bindingContext);
+                    }
+                }
+            }
+        });
     }
 
     private static async create(controller: BaseController): Promise<string> {
