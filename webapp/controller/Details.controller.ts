@@ -79,8 +79,12 @@ export default class Details extends BaseController {
         viewModel.setProperty("/actionButtonsInfo/midColumn/fullScreen", !isFullScreen);
     }
 
-    public onButtonCloseViewDetailsPress(): void {
+    public async onButtonCloseViewDetailsPress(): Promise<void> {
         const viewModel = this.getModel("view") as JSONModel;
+
+        if (this.action === 'create') {
+            await this.onButtonDeletePress();
+        }
         
         (this.getRouter() as Router).navTo("RouteMaster");
         viewModel.setProperty("/layout", "OneColumn");
@@ -96,6 +100,7 @@ export default class Details extends BaseController {
     public async onButtonDeletePress(): Promise<void> {
         const bindingContext = this.getView()?.getBindingContext() as Context;
         await Utils.crud(this, "delete", bindingContext);
+        this.action = 'edit';
         this.onButtonCloseViewDetailsPress();
     }
 
