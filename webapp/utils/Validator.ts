@@ -30,7 +30,7 @@ export default class Validator {
         const resourceBundle = (form.getModel("i18n") as ResourceModel).getResourceBundle() as ResourceBundle;
 
         controls.forEach(control => {
-            if (this.isValidatable(control)) {
+            if (this.isValidatable(control) && control.getProperty("required") === true) {
                 const value = this.getControlValue(control);
                 
                 if (!value) {

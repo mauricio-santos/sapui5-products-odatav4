@@ -14,7 +14,7 @@
             <form:content>
 
                 <Label id="idProductIDFragmentEditLabel" text="{i18n>productId}" required="true"/>
-                <Input id="idProductFragmentEditInput" 
+                <Input id="idProductFragmentEditInput" required="true"
                     value = "{
                         path: 'form>/product', 
                         type: 'sap.ui.model.type.String',
@@ -26,7 +26,7 @@
                 />
 
                 <Label id="idProductNameFragmentEditLabel" text="{i18n>productName}" required="true"/>
-                <Input id="idProductNameFragmentEditInput" 
+                <Input id="idProductNameFragmentEditInput" required="true"
                     value = "{
                         path: 'form>/productName', 
                         type: 'sap.ui.model.type.String',
@@ -43,13 +43,13 @@
                         path: 'form>/description', 
                         type: 'sap.ui.model.type.String',
                         constraints: { 
-                            minLength:1
+                            maxLength:20
                         }
                     }"
                 />
 
                 <Label id="idSupplierFragmentEditLabel" text="{i18n>supplier}" required="true"/>
-                <ComboBox id="idSuppliersSetFragmentEditComboBox" items="{/SuppliersSet}" 
+                <ComboBox id="idSuppliersSetFragmentEditComboBox" items="{/SuppliersSet}" required="true" 
                     selectedKey = "{
                         path: 'form>/supplier_ID', 
                         type: 'sap.ui.model.type.String',
@@ -62,7 +62,7 @@
                 </ComboBox>
 
                 <Label id="idCategoryFragmentEditLabel" text="{i18n>category}" required="true"/>
-                <ComboBox id="idVhCategoriesSetFragmentEditComboBox" items="{/VH_CategoriesSet}"
+                <ComboBox id="idVhCategoriesSetFragmentEditComboBox" items="{/VH_CategoriesSet}" required="true"
                     selectedKey = "{
                         path: 'form>/category_ID', 
                         type: 'sap.ui.model.type.String',
@@ -75,7 +75,7 @@
                 </ComboBox>
 
                 <Label id="idSubCategoryFragmentEditLabel" text="{i18n>subCategory}" required="true"/>
-                <ComboBox id="idVhSubCategoriesSetFragmentEditComboBox" items="{/VH_SubCategoriesSet}"
+                <ComboBox id="idVhSubCategoriesSetFragmentEditComboBox" items="{/VH_SubCategoriesSet}" required="true"
                     selectedKey = "{
                         path: 'form>/subCategory_ID', 
                         type: 'sap.ui.model.type.String',
@@ -88,7 +88,7 @@
                 </ComboBox>
 
                 <Label id="idStockFragmentEditLabel" text="{i18n>stock}" required="true"/>
-                <ComboBox id="idVhStockFragmentEditComboBox" items="{/VH_Stock}"
+                <ComboBox id="idVhStockFragmentEditComboBox" items="{/VH_Stock}" required="true"
                     selectedKey = "{
                         path: 'form>/stock_code', 
                         type: 'sap.ui.model.type.String',
@@ -100,8 +100,8 @@
                     <core:Item id="idNameFragmentEditItem" key="{code}" text="{name}"/>
                 </ComboBox>
 
-                <Label id="idPriceFragmentEditLabel" text="{i18n>price}"/>
-                <Input id="idPriceFragmentEditInput"
+                <Label id="idPriceFragmentEditLabel" text="{i18n>price}" required="true"/>
+                <Input id="idPriceFragmentEditInput" required="true"
                     value = "{
                         path: 'form>/price', 
                         type: 'sap.ui.model.type.Float',
@@ -112,8 +112,8 @@
                     description="{form>/currency}"
                 />
 
-                <Label id="idRatingFragmentEditLabel" text="{i18n>rating}"/>
-                <RatingIndicator id="idRatingFragmentEditRatingIndicator"
+                <Label id="idRatingFragmentEditLabel" text="{i18n>rating}" required="true"/>
+                <RatingIndicator id="idRatingFragmentEditRatingIndicator" required="true"
                     editable="{= ${view>/actionButtonsInfo/midColumn/isEditMode} }"
                     value = "{
                         path: 'form>/rating', 

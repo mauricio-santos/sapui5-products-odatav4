@@ -10,6 +10,7 @@ import Utils from "../utils/Utils";
 import Control from "sap/ui/core/Control";
 import SimpleForm from "sap/ui/layout/form/SimpleForm";
 import Validator from "../utils/Validator";
+import Message from "sap/ui/core/message/Message";
 import MessageBox from "sap/m/MessageBox";
 
 const FRAGMENT_NAMESPACE = "santos.sapui5productsfe.fragments";
@@ -99,10 +100,14 @@ export default class Details extends BaseController {
 
     public async onButtonSavePress(): Promise<void> {
         if (!await this.validateForm()) {
-            MessageBox.error(this.getText("vilidateError"))
-        }else {
-            this.onButtonCloseViewDetailsPress();
+            MessageBox.error(this.getText("validationError"));
+            return;
         }
+
+        const bindingContext = this.getView()?.getBindingContext() as Context;
+        const formModel = this.getModel("form") as JSONModel;
+        await Utils.crud(this, "update", bindingContext, formModel);
+        this.toggleEditMode(false);
     }
 
     public onButtonCancelPress(): void {
@@ -119,13 +124,8 @@ export default class Details extends BaseController {
     private async showFormFragment(fragmentName: FormFragmentName): Promise<void> {
         const container = this.byId("idformContainerFlexBox") as FlexBox;
         const fragment = await this.getFormFragment(fragmentName);
-
         container.removeAllItems();
         container.addItem(fragment);
-
-        if (fragmentName === "Change") {
-            this.validateForm();
-        }
     }
 
     private getFormFragment(fragmentName: FormFragmentName): Promise<VBox> {
