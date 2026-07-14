@@ -113,4 +113,14 @@ export default class Master extends BaseController {
             "action": "edit"
         });
     }
+
+    public async onCreateButtonPress(): Promise<void> {
+        const id = await Utils.crud(this, "create");
+        const router = this.getRouter() as Router;
+        
+        router.navTo("RouteDetails", { 
+            "ID": id,
+            "action": "create"
+        });
+    }
 }

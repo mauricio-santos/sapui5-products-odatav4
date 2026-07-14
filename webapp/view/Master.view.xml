@@ -113,6 +113,13 @@
                 <headerToolbar>
                     <Toolbar id="idCountProductsToolbar">
                         <Title id="idCountProductsTitle" text="{i18n>appTitle} ({/ProductsSet/$count})"/>
+                        <ToolbarSpacer id="idToolbarSpacer"/>
+                        <Button id="idCreateButton" 
+                            text="{i18n>create}"
+                            tooltip="{i18n>create}"
+                            type="Emphasized"
+                            press="onCreateButtonPress"
+                        />
                     </Toolbar>
                 </headerToolbar>
 

@@ -48,23 +48,24 @@ export default class Details extends BaseController {
     private onMatchedObject(event: Route$PatternMatchedEvent): void {
         this.loadModel();
         const args = event.getParameter("arguments") as { ID: string; action: string };
-        const view = this.getView() as View;
+        const viewDetails = this.getView() as View;
         const viewModel = this.getModel("view") as JSONModel;
-
+        const viewContainer = viewDetails.getParent()?.getParent() as FlexBox;
+        
+        viewContainer.setBusy(true);
         this.action = args.action;
 
-        viewModel.setProperty("/layout", "TwoColumnsMidExpanded");
-
-        view.bindElement({
+        viewDetails.bindElement({
             path: `/ProductsSet(${args.ID})`,
             parameters: {
                 $select: "ID,productName,description,supplier_ID,category_ID,subCategory_ID,stock_code,rating,price,currency"
             },
             events: {
-                dataRequested: () => view.setBusy(true),
+                dataRequested: () => {},
                 dataReceived: () => {
-                    view.setBusy(false);
                     this.toggleEditMode(this.action === "create");
+                    viewModel.setProperty("/layout", "TwoColumnsMidExpanded");
+                    viewContainer.setBusy(false);
                 }
             }
         });
