@@ -7,6 +7,10 @@ import FlexBox from "sap/m/FlexBox";
 import VBox from "sap/m/VBox";
 import Context from "sap/ui/model/odata/v4/Context";
 import Utils from "../utils/Utils";
+import Control from "sap/ui/core/Control";
+import SimpleForm from "sap/ui/layout/form/SimpleForm";
+import Validator from "../utils/Validator";
+import MessageBox from "sap/m/MessageBox";
 
 const FRAGMENT_NAMESPACE = "santos.sapui5productsfe.fragments";
 
@@ -92,8 +96,12 @@ export default class Details extends BaseController {
         this.onButtonCloseViewDetailsPress();
     }
 
-    public onButtonSavePress(): void {
-        this.toggleEditMode(false);
+    public async onButtonSavePress(): Promise<void> {
+        if (!await this.validateForm()) {
+            MessageBox.error(this.getText("vilidateError"))
+        }else {
+            this.onButtonCloseViewDetailsPress();
+        }
     }
 
     public onButtonCancelPress(): void {
@@ -113,6 +121,10 @@ export default class Details extends BaseController {
 
         container.removeAllItems();
         container.addItem(fragment);
+
+        if (fragmentName === "Change") {
+            this.validateForm();
+        }
     }
 
     private getFormFragment(fragmentName: FormFragmentName): Promise<VBox> {
@@ -122,5 +134,14 @@ export default class Details extends BaseController {
             id: view.getId(),
             name: `${FRAGMENT_NAMESPACE}.${fragmentName}`
         }) as Promise<VBox>;
+    }
+
+    private async validateForm(): Promise<boolean> {
+        const vBox = await this.formFragments["Change"] as VBox;
+        const aggregation = vBox.getAggregation("items") as Control[];
+        const simpleForm = aggregation[0] as SimpleForm;
+        const validator = new Validator();
+        
+        return validator.validate(simpleForm);
     }
 }

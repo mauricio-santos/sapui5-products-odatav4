@@ -1,1 +1,4 @@
 /* Enter your custom styles here */
+.ratingError .sapUiIcon  {
+    color: red !important;
+}
