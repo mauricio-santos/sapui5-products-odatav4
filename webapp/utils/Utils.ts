@@ -5,6 +5,7 @@ import JSONModel from "sap/ui/model/json/JSONModel";
 import Context from "sap/ui/model/odata/v4/Context";
 import MessageBox from "sap/m/MessageBox";
 import ODataModel from "sap/ui/model/odata/v4/ODataModel";
+import MessageToast from "sap/m/MessageToast";
 
 /**
  * @namespace santos.sapui5productsfe.utils
@@ -40,11 +41,12 @@ export default class Utils {
                                 case "update": await this.update(controller, bindingContext, model); break;
                                 case "delete": await this.delete(controller, bindingContext); break;
                             }
+                            resolve();
                         } catch (error) {
                             reject(error);
                         }
                     }
-                    resolve();
+                    reject();
                 }
             });
         });
@@ -79,15 +81,30 @@ export default class Utils {
 
                 this.refreshModel(controller);
                 view?.setBusy(false);
+                MessageToast.show(controller.getText("operationSuccess"));
                 resolve();
             }catch (error) {
+                view?.setBusy(false);
                 reject(error);
             }
         });
     }
 
     private static async delete(controller: BaseController, bindingContext?: Context): Promise<void> {
+        const view = controller.getView();
+        view?.setBusy(true);
 
+        return new Promise<void>(async (resolve, reject) => {
+            try {
+                await bindingContext?.delete();
+                this.refreshModel(controller);
+                view?.setBusy(false);
+                resolve();
+            } catch (error) {
+                view?.setBusy(false);
+                reject(error);
+            }
+        });
     }
 
     private static refreshModel(controller: BaseController): void {

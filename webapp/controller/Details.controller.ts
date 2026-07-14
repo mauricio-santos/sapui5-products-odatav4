@@ -10,7 +10,6 @@ import Utils from "../utils/Utils";
 import Control from "sap/ui/core/Control";
 import SimpleForm from "sap/ui/layout/form/SimpleForm";
 import Validator from "../utils/Validator";
-import Message from "sap/ui/core/message/Message";
 import MessageBox from "sap/m/MessageBox";
 
 const FRAGMENT_NAMESPACE = "santos.sapui5productsfe.fragments";
@@ -94,7 +93,9 @@ export default class Details extends BaseController {
         Utils.copyForm(context, this);
     }
 
-    public onButtonDeletePress(): void {
+    public async onButtonDeletePress(): Promise<void> {
+        const bindingContext = this.getView()?.getBindingContext() as Context;
+        await Utils.crud(this, "delete", bindingContext);
         this.onButtonCloseViewDetailsPress();
     }
 
@@ -107,10 +108,13 @@ export default class Details extends BaseController {
         const bindingContext = this.getView()?.getBindingContext() as Context;
         const formModel = this.getModel("form") as JSONModel;
         await Utils.crud(this, "update", bindingContext, formModel);
-        this.toggleEditMode(false);
+        this.action = 'edit';
     }
 
-    public onButtonCancelPress(): void {
+    public async onButtonCancelPress(): Promise<void> {
+        if (this.action === 'create') {
+            await this.onButtonDeletePress();
+        }
         this.toggleEditMode(false);
     }
 
