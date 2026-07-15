@@ -1,5 +1,4 @@
 import BaseController from "./BaseController";
-import Router from "sap/ui/core/routing/Router";
 import { Route$PatternMatchedEvent } from "sap/ui/core/routing/Route";
 import View from "sap/ui/core/mvc/View";
 import JSONModel from "sap/ui/model/json/JSONModel";
@@ -11,22 +10,25 @@ import Control from "sap/ui/core/Control";
 import SimpleForm from "sap/ui/layout/form/SimpleForm";
 import Validator from "../utils/Validator";
 import MessageBox from "sap/m/MessageBox";
-
-const FRAGMENT_NAMESPACE = "santos.sapui5productsfe.fragments";
+import { ODataContextBinding$DataReceivedEvent } from "sap/ui/model/odata/v4/ODataContextBinding";
 
 type FormFragmentName = "Display" | "Change";
+type DetailsAction = "create" | "edit";
 
 /**
  * @namespace santos.sapui5productsfe.controller
  */
 export default class Details extends BaseController {
 
-    private action: string;
+    private static readonly FRAGMENT_NAMESPACE = "santos.sapui5productsfe.fragments";
+
+    private action: DetailsAction;
+    // ID reserved on the client for a product that is being created but not yet saved.
+    private draftId = "";
     private formFragments: { [name: string]: Promise<VBox> } = {};
 
     public onInit(): void {
-        const router = this.getRouter() as Router;
-        router.getRoute("RouteDetails")?.attachPatternMatched(this.onMatchedObject, this);
+        this.getRouter().getRoute("RouteDetails")?.attachPatternMatched((event) => this.onMatchedObject(event));
     }
 
     private loadModel(): void {
@@ -41,31 +43,52 @@ export default class Details extends BaseController {
             rating: 0,
             price: 0,
             currency: "USD"
-        }
+        };
         this.setModel(new JSONModel(data), "form");
     }
 
     private onMatchedObject(event: Route$PatternMatchedEvent): void {
         this.loadModel();
         const args = event.getParameter("arguments") as { ID: string; action: string };
-        const viewDetails = this.getView() as View;
         const viewModel = this.getModel("view") as JSONModel;
+
+        this.action = args.action as DetailsAction;
+        viewModel.setProperty("/layout", "TwoColumnsMidExpanded");
+
+        if (this.action === "create") {
+            // Nothing is sent to the backend yet: the product only becomes real when Save is pressed.
+            // This avoids leaving an empty product behind if the user navigates away.
+            this.draftId = args.ID;
+            this.toggleEditMode(true);
+            return;
+        }
+
+        this.bindProduct(args.ID);
+    }
+
+    private bindProduct(id: string): void {
+        const viewDetails = this.getView() as View;
         const viewContainer = viewDetails.getParent()?.getParent() as FlexBox;
-        
+
         viewContainer.setBusy(true);
-        this.action = args.action;
 
         viewDetails.bindElement({
-            path: `/ProductsSet(${args.ID})`,
+            path: `/ProductsSet(${id})`,
             parameters: {
-                $select: "ID,productName,description,supplier_ID,category_ID,subCategory_ID,stock_code,rating,price,currency"
+                $select: "ID,product,productName,description,supplier_ID,category_ID,subCategory_ID,stock_code,rating,price,currency"
             },
             events: {
-                dataRequested: () => {},
-                dataReceived: () => {
-                    this.toggleEditMode(this.action === "create");
-                    viewModel.setProperty("/layout", "TwoColumnsMidExpanded");
+                dataReceived: (event: ODataContextBinding$DataReceivedEvent) => {
                     viewContainer.setBusy(false);
+
+                    // dataReceived also fires on failure (e.g. product not found): notify and go back.
+                    if (event.getParameter("error")) {
+                        MessageBox.error(this.getText("loadError"));
+                        this.onButtonCloseViewDetailsPress();
+                        return;
+                    }
+
+                    this.toggleEditMode(false);
                 }
             }
         });
@@ -79,14 +102,10 @@ export default class Details extends BaseController {
         viewModel.setProperty("/actionButtonsInfo/midColumn/fullScreen", !isFullScreen);
     }
 
-    public async onButtonCloseViewDetailsPress(): Promise<void> {
+    public onButtonCloseViewDetailsPress(): void {
         const viewModel = this.getModel("view") as JSONModel;
 
-        if (this.action === 'create') {
-            await this.onButtonDeletePress();
-        }
-        
-        (this.getRouter() as Router).navTo("RouteMaster");
+        this.getRouter().navTo("RouteMaster");
         viewModel.setProperty("/layout", "OneColumn");
         viewModel.setProperty("/actionButtonsInfo/midColumn/fullScreen", false);
     }
@@ -98,27 +117,43 @@ export default class Details extends BaseController {
     }
 
     public async onButtonDeletePress(): Promise<void> {
-        const bindingContext = this.getView()?.getBindingContext() as Context;
-        await Utils.crud(this, "delete", bindingContext);
-        this.action = 'edit';
+        const context = this.getView()?.getBindingContext() as Context;
+        const deleted = await Utils.deleteProduct(this, context);
+        if (!deleted) {
+            return;
+        }
+
         this.onButtonCloseViewDetailsPress();
     }
 
     public async onButtonSavePress(): Promise<void> {
-        if (!await this.validateForm()) {
+        if (!(await this.validateForm())) {
             MessageBox.error(this.getText("validationError"));
             return;
         }
 
-        const bindingContext = this.getView()?.getBindingContext() as Context;
         const formModel = this.getModel("form") as JSONModel;
-        await Utils.crud(this, "update", bindingContext, formModel);
-        this.action = 'edit';
+
+        if (this.action === "create") {
+            const created = await Utils.createProduct(this, this.draftId, formModel);
+            if (created) {
+                this.action = "edit";
+                this.bindProduct(this.draftId);
+            }
+            return;
+        }
+
+        const context = this.getView()?.getBindingContext() as Context;
+        const updated = await Utils.updateProduct(this, context, formModel);
+        if (updated) {
+            this.action = "edit";
+        }
     }
 
-    public async onButtonCancelPress(): Promise<void> {
-        if (this.action === 'create') {
-            await this.onButtonDeletePress();
+    public onButtonCancelPress(): void {
+        if (this.action === "create") {
+            this.onButtonCloseViewDetailsPress();
+            return;
         }
         this.toggleEditMode(false);
     }
@@ -140,18 +175,19 @@ export default class Details extends BaseController {
     private getFormFragment(fragmentName: FormFragmentName): Promise<VBox> {
         const view = this.getView() as View;
 
-        return this.formFragments[fragmentName] ??= this.loadFragment({
+        this.formFragments[fragmentName] ??= this.loadFragment({
             id: view.getId(),
-            name: `${FRAGMENT_NAMESPACE}.${fragmentName}`
+            name: `${Details.FRAGMENT_NAMESPACE}.${fragmentName}`
         }) as Promise<VBox>;
+
+        return this.formFragments[fragmentName];
     }
 
     private async validateForm(): Promise<boolean> {
-        const vBox = await this.formFragments["Change"] as VBox;
+        const vBox = await this.formFragments.Change;
         const aggregation = vBox.getAggregation("items") as Control[];
         const simpleForm = aggregation[0] as SimpleForm;
-        const validator = new Validator();
-        
-        return validator.validate(simpleForm);
+
+        return Validator.validate(simpleForm);
     }
 }

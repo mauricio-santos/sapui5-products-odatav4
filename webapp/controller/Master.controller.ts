@@ -15,20 +15,14 @@ import Utils from "../utils/Utils";
 import { ListBase$ItemPressEvent } from "sap/m/ListBase";
 import ColumnListItem from "sap/m/ColumnListItem";
 import Context from "sap/ui/model/odata/v4/Context";
-import JSONModel from "sap/ui/model/json/JSONModel";
-import Router from "sap/ui/core/routing/Router";
 
 /**
  * @namespace santos.sapui5productsfe.controller
  */
 export default class Master extends BaseController {
 
-    public onInit(): void {
-
-    }
-
     public onFilterBarSearch(event: FilterBar$SearchEvent): void {
-        const selectionSet = (event.getParameter("selectionSet") ?? []) as Control[];
+        const selectionSet = (event.getParameter("selectionSet") ?? []);
 
         const filters = selectionSet
             .map((control) => this.buildFilter(control))
@@ -74,11 +68,11 @@ export default class Master extends BaseController {
 
         binding.filter(filters, FilterType.Application);
 
-        Utils.refreshProductsCount(binding, this);
+        void Utils.refreshProductsCount(binding, this);
     }
 
     public onFilterBarClear(event: FilterBar$ClearEvent): void {
-        const selectionSet = (event.getParameter("selectionSet") ?? []) as Control[];
+        const selectionSet = (event.getParameter("selectionSet") ?? []);
         selectionSet.forEach((control) => this.clearControl(control));
         this.applyFilters([]);
     }
@@ -103,22 +97,22 @@ export default class Master extends BaseController {
     }
 
     public navToDetails(event: ListBase$ItemPressEvent) : void {
-        const table = event.getSource() as Table;
+        const table = event.getSource();
         const item = table.getSelectedItem() as ColumnListItem;
         const id = (item.getBindingContext() as Context).getProperty("ID");
-        const router = this.getRouter() as Router;
 
-        router.navTo("RouteDetails", { 
+        this.getRouter().navTo("RouteDetails", {
             "ID": id,
             "action": "edit"
         });
     }
 
-    public async onCreateButtonPress(): Promise<void> {
-        const id = await Utils.crud(this, "create");
-        const router = this.getRouter() as Router;
-        
-        router.navTo("RouteDetails", { 
+    public onCreateButtonPress(): void {
+        // Reserve an id on the client so navigation is instant; the product is only
+        // persisted in the backend once the user presses Save on the Details page.
+        const id = crypto.randomUUID();
+
+        this.getRouter().navTo("RouteDetails", {
             "ID": id,
             "action": "create"
         });

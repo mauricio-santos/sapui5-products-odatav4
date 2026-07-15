@@ -19,7 +19,7 @@ export default class Container extends BaseController {
                     isEditMode: false
                 }
             }
-        })
+        });
         this.setModel(model, "view");
     }
 

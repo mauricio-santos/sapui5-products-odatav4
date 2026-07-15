@@ -1,70 +1,96 @@
-import ResourceBundle from 'sap/base/i18n/ResourceBundle';
-import ComboBox from 'sap/m/ComboBox';
-import Input from 'sap/m/Input';
-import RatingIndicator from 'sap/m/RatingIndicator';
-import Select from 'sap/m/Select';
-import TextArea from 'sap/m/TextArea';
-import { ValueState } from 'sap/ui/core/library';
-import SimpleForm from 'sap/ui/layout/form/SimpleForm';
-import ResourceModel from 'sap/ui/model/resource/ResourceModel';
+import ResourceBundle from "sap/base/i18n/ResourceBundle";
+import ComboBox from "sap/m/ComboBox";
+import Input from "sap/m/Input";
+import RatingIndicator from "sap/m/RatingIndicator";
+import TextArea from "sap/m/TextArea";
+import UI5Element from "sap/ui/core/Element";
+import { ValueState } from "sap/ui/core/library";
+import SimpleForm from "sap/ui/layout/form/SimpleForm";
+import ResourceModel from "sap/ui/model/resource/ResourceModel";
 
 /**
  * @namespace santos.sapui5productsfe.utils
  */
-
 export default class Validator {
 
-    private isValid : boolean;
+    public static validate(form: SimpleForm): boolean {
+        const bundle = (form.getModel("i18n") as ResourceModel).getResourceBundle() as ResourceBundle;
+        let isValid = true;
 
-    constructor () {
-        this.isValid = true;
-    }
+        form.getContent().forEach((control) => {
+            if (!this.isValidatable(control)) {
+                return;
+            }
 
-    public validate (simpleForm : SimpleForm) : boolean {
-        this.validateForm(simpleForm);
-        return this.isValid;
-    } 
+            // UI5 already rejects values that break the binding type constraints
+            // (e.g. minLength/maxLength) and flags the control with ValueState.Error on its own.
+            // A rejected value never reaches the model, so treat this as invalid too - otherwise
+            // hasValue() below would still see the text the user typed and let it pass.
+            if (this.hasTypeError(control)) {
+                isValid = false;
+                return;
+            }
 
-    private validateForm(form: SimpleForm): void {
-        const controls = form.getContent();
-        const resourceBundle = (form.getModel("i18n") as ResourceModel).getResourceBundle() as ResourceBundle;
+            if (control.getProperty("required") !== true) {
+                return;
+            }
 
-        controls.forEach(control => {
-            if (this.isValidatable(control) && control.getProperty("required") === true) {
-                const value = this.getControlValue(control);
-                
-                if (!value) {
-                    if (control instanceof RatingIndicator) {
-                        control.addStyleClass("ratingError");
-                        this.isValid = false;
-                    } else {
-                        (control as Input | TextArea | ComboBox | Select ).setValueState(ValueState.Error);
-                        (control as Input | TextArea | ComboBox | Select ).setValueStateText(resourceBundle.getText("requiredFieldError") || "Required field");
-                        this.isValid = false;
-                    }
-
-                } else if (control instanceof RatingIndicator) {
-                    control.removeStyleClass("ratingError");
-                } else {
-                    (control as Input | TextArea | ComboBox | Select ).setValueState(ValueState.None);
-                }
+            if (this.hasValue(control)) {
+                this.clearError(control);
+            } else {
+                this.markError(control, bundle);
+                isValid = false;
             }
         });
+
+        return isValid;
     }
 
-    private isValidatable(control: any): boolean {
+    private static isValidatable(control: UI5Element): boolean {
         return control instanceof Input ||
                control instanceof TextArea ||
                control instanceof ComboBox ||
                control instanceof RatingIndicator;
     }
 
-    private getControlValue(control: any): string | number | null {
-        if (control instanceof Input || control instanceof TextArea || control instanceof RatingIndicator) {
-            return control.getValue();
-        } else if (control instanceof ComboBox) {
-            return control.getSelectedKey();
+    private static hasTypeError(control: UI5Element): boolean {
+        if (control instanceof Input || control instanceof TextArea || control instanceof ComboBox) {
+            return control.getValueState() === ValueState.Error;
         }
-        return null;
+        return false;
+    }
+
+    private static hasValue(control: UI5Element): boolean {
+        if (control instanceof ComboBox) {
+            return !!control.getSelectedKey();
+        }
+        if (control instanceof RatingIndicator) {
+            return control.getValue() > 0;
+        }
+        if (control instanceof Input || control instanceof TextArea) {
+            return !!control.getValue();
+        }
+        return true;
+    }
+
+    private static markError(control: UI5Element, bundle: ResourceBundle): void {
+        if (control instanceof RatingIndicator) {
+            control.addStyleClass("ratingError");
+            return;
+        }
+        if (control instanceof Input || control instanceof TextArea || control instanceof ComboBox) {
+            control.setValueState(ValueState.Error);
+            control.setValueStateText(bundle.getText("requiredFieldError") ?? "Required field");
+        }
+    }
+
+    private static clearError(control: UI5Element): void {
+        if (control instanceof RatingIndicator) {
+            control.removeStyleClass("ratingError");
+            return;
+        }
+        if (control instanceof Input || control instanceof TextArea || control instanceof ComboBox) {
+            control.setValueState(ValueState.None);
+        }
     }
 }

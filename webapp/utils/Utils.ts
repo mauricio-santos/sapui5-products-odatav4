@@ -20,95 +20,107 @@ export default class Utils {
 
     public static copyForm(context: Context, controller: BaseController): void {
         const formModel = controller.getModel("form") as JSONModel;
-        const data = context.getObject();       
-        formModel.setData(data);
+
+        // Read each field explicitly instead of spreading context.getObject(): the Display
+        // fragment binds navigation properties (supplier, category, subCategory, stock) on the
+        // same context, so autoExpandSelect expands them and getObject() would include them as
+        // nested objects. Copying those into the form would later break updateProduct, since
+        // OData v4 rejects setProperty calls made with a non-primitive value.
+        formModel.setData({
+            product: context.getProperty("product"),
+            productName: context.getProperty("productName"),
+            description: context.getProperty("description"),
+            supplier_ID: context.getProperty("supplier_ID"),
+            category_ID: context.getProperty("category_ID"),
+            subCategory_ID: context.getProperty("subCategory_ID"),
+            stock_code: context.getProperty("stock_code"),
+            rating: context.getProperty("rating"),
+            price: context.getProperty("price"),
+            currency: context.getProperty("currency")
+        });
     }
 
-    public static async crud(controller: BaseController, action: string, bindingContext?: Context, model?: JSONModel): Promise<void | string> {
+    public static async createProduct(controller: BaseController, id: string, formModel: JSONModel): Promise<boolean> {
+        const view = controller.getView();
+        const odataModel = controller.getModel() as ODataModel;
+        const listBinding = odataModel.bindList("/ProductsSet");
+        const data = formModel.getData() as Record<string, unknown>;
+        const context = listBinding.create({ ID: id, ...data });
 
-        if (action === "create") {
-            return await this.create(controller);
+        view?.setBusy(true);
+        try {
+            await context.created();
+            odataModel.refresh();
+            MessageToast.show(controller.getText("operationSuccess"));
+            return true;
+        } catch (error) {
+            // The POST failed: discard the transient entry so a retry starts from a clean state.
+            await listBinding.resetChanges();
+            this.showError(controller, error);
+            return false;
+        } finally {
+            view?.setBusy(false);
+        }
+    }
+
+    public static async updateProduct(controller: BaseController, context: Context, formModel: JSONModel): Promise<boolean> {
+        if (!(await this.confirm(controller))) {
+            return false;
         }
 
-        return new Promise<void | string>((resolve, reject) => {
+        const view = controller.getView();
+        const odataModel = controller.getModel() as ODataModel;
+        view?.setBusy(true);
+        try {
+            const data = formModel.getData() as Record<string, unknown>;
+            await Promise.all(
+                Object.keys(data).map((property) => context.setProperty(property, data[property]))
+            );
+
+            odataModel.refresh();
+            MessageToast.show(controller.getText("operationSuccess"));
+            return true;
+        } catch (error) {
+            // Revert the pending property changes so the form reflects the server state again.
+            odataModel.resetChanges();
+            this.showError(controller, error);
+            return false;
+        } finally {
+            view?.setBusy(false);
+        }
+    }
+
+    public static async deleteProduct(controller: BaseController, context: Context): Promise<boolean> {
+        if (!(await this.confirm(controller))) {
+            return false;
+        }
+
+        const view = controller.getView();
+        view?.setBusy(true);
+        try {
+            await context.delete();
+            (controller.getModel() as ODataModel).refresh();
+            return true;
+        } catch (error) {
+            this.showError(controller, error);
+            return false;
+        } finally {
+            view?.setBusy(false);
+        }
+    }
+
+    private static confirm(controller: BaseController): Promise<boolean> {
+        return new Promise((resolve) => {
             MessageBox.confirm(controller.getText("sureOperation"), {
                 actions: [MessageBox.Action.YES, MessageBox.Action.NO],
                 emphasizedAction: MessageBox.Action.YES,
-                onClose: async (actionButton): Promise<void | string> => {
-                    if (actionButton === MessageBox.Action.YES) {
-                        try {
-                            switch (action) {
-                                case "update": await this.update(controller, bindingContext, model); break;
-                                case "delete": await this.delete(controller, bindingContext); break;
-                            }
-                            resolve();
-                        } catch (error) {
-                            reject(error);
-                        }
-                    }
-                    reject();
-                }
+                onClose: (action) => resolve(action === MessageBox.Action.YES)
             });
         });
     }
 
-    private static async create(controller: BaseController): Promise<string> {
-        const odataModel = controller.getModel() as ODataModel;
-        const bindList = odataModel.bindList("/ProductsSet") as ODataListBinding;
-        const newContext = bindList.create() as Context;
-
-        await newContext.created();
-        this.refreshModel(controller);
-        return newContext.getProperty("ID") as string;
-    }
-
-    private static async update(controller: BaseController, bindingContext?: Context, model?: JSONModel): Promise<void> {
-        const view = controller.getView();
-        view?.setBusy(true);
-
-        return new Promise<void>(async (resolve, reject) => {
-            try {
-                await bindingContext?.setProperty("product", model?.getProperty("/product"));
-                await bindingContext?.setProperty("productName", model?.getProperty("/productName"));
-                await bindingContext?.setProperty("description", model?.getProperty("/description"));
-                await bindingContext?.setProperty("supplier_ID", model?.getProperty("/supplier_ID"));
-                await bindingContext?.setProperty("category_ID", model?.getProperty("/category_ID"));
-                await bindingContext?.setProperty("subCategory_ID", model?.getProperty("/subCategory_ID"));
-                await bindingContext?.setProperty("stock_code", model?.getProperty("/stock_code"));
-                await bindingContext?.setProperty("rating", model?.getProperty("/rating"));
-                await bindingContext?.setProperty("price", model?.getProperty("/price"));
-                await bindingContext?.setProperty("currency", "USD");
-
-                this.refreshModel(controller);
-                view?.setBusy(false);
-                MessageToast.show(controller.getText("operationSuccess"));
-                resolve();
-            }catch (error) {
-                view?.setBusy(false);
-                reject(error);
-            }
-        });
-    }
-
-    private static async delete(controller: BaseController, bindingContext?: Context): Promise<void> {
-        const view = controller.getView();
-        view?.setBusy(true);
-
-        return new Promise<void>(async (resolve, reject) => {
-            try {
-                await bindingContext?.delete();
-                this.refreshModel(controller);
-                view?.setBusy(false);
-                resolve();
-            } catch (error) {
-                view?.setBusy(false);
-                reject(error);
-            }
-        });
-    }
-
-    private static refreshModel(controller: BaseController): void {
-        const odataModel = controller.getModel() as ODataModel;
-        odataModel.refresh();
+    private static showError(controller: BaseController, error: unknown): void {
+        const details = error instanceof Error ? error.message : String(error);
+        MessageBox.error(controller.getText("operationError"), { details });
     }
 }
